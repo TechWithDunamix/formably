@@ -1,0 +1,6 @@
+nexios>=2.4.1
+authlib
+tortoise-orm
+aerich
+toml
+pyjwt
