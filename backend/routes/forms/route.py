@@ -97,9 +97,7 @@ async def list_forms(req: Request, res: Response):
 async def get_forms(req: Request, res: Response):
         form_id = req.path_params.get("form_id")
         user = req.user
-
-        # Get the form with related sections and fields
-        form = await Forms.get_or_none(id=form_id, owner=user).prefetch_related(
+        form = await Forms.filter(Q(owner=user), Q(id=form_id) | Q(public_id = form_id)).first().prefetch_related(
             "sections",
             "sections__fields",
             "fields"
