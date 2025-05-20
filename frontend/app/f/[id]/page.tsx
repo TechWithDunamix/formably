@@ -195,9 +195,8 @@ export default function PublicFormPage() {
   useEffect(() => {
     if (formData) {
       const rootElement = document.documentElement
-      rootElement.style.setProperty("--primary", primaryColor || "#7C3AED")
-      rootElement.style.setProperty("--secondary", secondaryColor || "#EC4899")
-
+      rootElement.style.setProperty("--color-primary", primaryColor || "#7C3AED")
+      rootElement.style.setProperty("--color-secondary", secondaryColor || "#EC4899")
       return () => {
         // Restore default colors when component unmounts
         rootElement.style.removeProperty("--primary")
@@ -352,14 +351,14 @@ export default function PublicFormPage() {
           />
 
           <div className="mt-8 flex justify-center">
-            <Button type="submit" size="lg" disabled={isSubmitting}>
+            <Button type="submit" size="lg" className={`w-full max-w-xs  text-white`} style={{ backgroundColor: primaryColor }}>
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Submitting...
                 </>
               ) : (
-                "Submit"
+                "Submit" 
               )}
             </Button>
           </div>
@@ -373,7 +372,7 @@ export default function PublicFormPage() {
                 href={formData.company_website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:underline"
+                style={{ color: secondaryColor }}
               >
                 {new URL(formData.company_website).hostname.replace(/^www\./, "")}
               </a>

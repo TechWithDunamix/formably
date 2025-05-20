@@ -262,7 +262,7 @@ export function FormRenderer({ sections, values, onChange, validationErrors }: F
                     onClick={() => onChange(field.field_name, option)}
                     className={cn(
                       "w-10 h-10 rounded-full flex items-center justify-center border-2 border-input m-1",
-                      value === option && `bg-blue-200 text-primary-foreground border-primary`,
+                      value === option && `bg-secondary text-primary-foreground border-primary`,
                     )}
                   >
                     {option}

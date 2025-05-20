@@ -1,6 +1,12 @@
-nexios>=2.4.1
+nexios>=2.4.3
 authlib
 tortoise-orm
 aerich
 toml
 pyjwt
+pyyaml 
+ua-parser 
+user-agents
+dotenv
+bcrypt
+asyncpg
