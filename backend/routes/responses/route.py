@@ -20,7 +20,7 @@ async def get_form_responses(req: Request, res: Response, form_id):
     if not form:
         return res.json({"error": "Form not found"},status_code=404)
     
-    response = await form.responses.all()
+    response = await form.responses.all().order_by("-created_at")
     return [await form.to_dict() for form in response]    
 
 
@@ -64,11 +64,15 @@ async def download_form_responses(req: Request, res: Response, form_id):
     writer.writerow([])  
 
     fieldnames = [x.field_name for x in fields]
+    if form.collect_email:
+        fieldnames.insert(0, "Email")
     dict_writer = csv.DictWriter(buffer, fieldnames=fieldnames)
     dict_writer.writeheader()
 
     for resp in responses:
-        dict_writer.writerow({**resp.response})
+        print("="* 20)
+        print("resp", resp.response)
+        writer.writerow({**resp.response})
 
     buffer.seek(0)
 

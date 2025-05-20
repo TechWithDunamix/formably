@@ -61,11 +61,26 @@ export const publicApi = {
 }
 
 // Responses APIs
+// Responses APIs
 export const responsesApi = {
   getAll: (formId: string, token: string) => api(`/v1/responses/${formId}`, { token }),
   getDetails: (formId: string, responseId: string, token: string) =>
     api(`/v1/responses/${formId}/r/${responseId}`, { token }),
-  download: (formId: string, token: string) => api(`/v1/responses/download/${formId}`, { token }),
+  download: async (formId: string, token: string): Promise<Blob> => {
+    const response = await fetch(`${config.apiUrl}/v1/responses/download/${formId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'text/csv' // Important for CSV responses
+      }
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || "Failed to download responses");
+    }
+
+    return await response.blob();
+  },
 }
 
 // Analytics APIs

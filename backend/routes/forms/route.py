@@ -86,7 +86,7 @@ async def list_forms(req: Request, res: Response):
             "fields"
         )
 
-        return [await format_form(form) for form in forms]
+        return [{**await format_form(form), "responses_count": await form.responses.all().count()} for form in forms]
 
 
 @forms_router.get("/{form_id}/details", 
