@@ -17,7 +17,8 @@ class FieldTypeEnum(str, Enum):
     SELECT = "select"
     RADIO = "radio"
     CHECKBOX = "checkbox"
-    MULTISELECT = "multiselect"
+    MULTISELEC = "multiselect"
+    FILE = "file"
 
 class FormFields(BaseModel):
     form_ref = f.ForeignKeyField("models.Forms", related_name="fields")

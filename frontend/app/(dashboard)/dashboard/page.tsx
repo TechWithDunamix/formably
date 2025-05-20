@@ -108,14 +108,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Conversion Rate</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? <Skeleton className="h-8 w-20" /> : <div className="text-3xl font-bold">68%</div>}
-          </CardContent>
-        </Card>
+       
       </div>
 
       <h2 className="text-2xl font-bold mb-4">Recent Forms</h2>
