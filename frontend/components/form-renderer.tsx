@@ -254,7 +254,7 @@ export function FormRenderer({ sections, values, onChange, validationErrors }: F
               {field.field_name}
               {field.required && <span className="text-destructive"> *</span>}
             </Label>
-            <div className="flex justify-between items-center">
+            <div className="flex  items-center">
               {options.map((option) => (
                 <div key={option} className="flex flex-col items-center">
                   <button
@@ -282,7 +282,7 @@ export function FormRenderer({ sections, values, onChange, validationErrors }: F
   return (
     <>
       {sections.map((section, sectionIndex) => (
-        <Card key={sectionIndex} className="mb-6">
+        <Card key={sectionIndex} className="mb-6 shadow-none">
           <CardHeader>
             <CardTitle>{section.title}</CardTitle>
             {section.description && <CardDescription>{section.description}</CardDescription>}

@@ -289,26 +289,44 @@ export default function PublicFormPage() {
 
   return (
     <div
-      className="min-h-screen py-12 px-4"
+      className="min-h-screen py-12 md:px-4"
       style={{
         background: `linear-gradient(to bottom, ${primaryColor}10, transparent)`,
       }}
     >
-      <div className="container max-w-3xl">
+      <div className="container max-w-3xl border rounded-lg bg-white md:p-6 mx-auto py-2">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="mb-10">
+  {/* Cover Image */}
+  {formData.cover_image && (
+    <div className="w-full h-48 bg-gray-200 relative overflow-hidden rounded-t-lg">
+      <img
+        src={formData.cover_image}
+        alt="Cover"
+        className="w-full h-full object-cover"
+      />
+    </div>
+  )}
+
+  {/* Logo and Title Section */}
+        <div className="text-center relative -mt-12">
           {formData.logo && (
-            <div className="mb-6 flex justify-center">
+            <div className="flex justify-center">
               <img
-                src={formData.logo || "/placeholder.svg"}
+                src={formData.logo}
                 alt={`${formData.title} logo`}
-                className="h-16 object-contain"
+                className="h-24 w-24 object-cover rounded-full border-4 border-white shadow-md"
               />
             </div>
           )}
-          <h1 className="text-3xl font-bold mb-3">{formData.title}</h1>
-          {formData.detail && <p className="text-muted-foreground">{formData.detail}</p>}
+
+          <h1 className="text-3xl font-bold mt-4">{formData.title}</h1>
+          {formData.detail && (
+            <p className="text-muted-foreground mt-2">{formData.detail}</p>
+          )}
         </div>
+      </div>
+
 
         {error && (
           <Alert variant="destructive" className="mb-6">
