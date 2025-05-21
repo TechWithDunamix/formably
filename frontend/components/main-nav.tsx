@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, FileText, BarChart3, Settings, LogOut, Menu, X } from "lucide-react"
+import { LayoutDashboard, FileText, BarChart3, Settings, LogOut, Menu, X, LayoutTemplate, SatelliteDishIcon } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { useState } from "react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
@@ -26,14 +26,14 @@ export function MainNav() {
       icon: <FileText className="h-5 w-5" />,
     },
     {
-      name: "Analytics",
-      path: "/analytics",
-      icon: <BarChart3 className="h-5 w-5" />,
+      name: "Templates",
+      path: "/templates",
+      icon: < LayoutTemplate className="h-5 w-5" />,
     },
     {
-      name: "Settings",
+      name: "Api",
       path: "/settings",
-      icon: <Settings className="h-5 w-5" />,
+      icon: <SatelliteDishIcon className="h-5 w-5" />,
     },
   ]
 

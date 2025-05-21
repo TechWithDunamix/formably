@@ -15,9 +15,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { AlertCircle, ArrowLeft, Save, Eye, Plus, Settings, Palette, Share2, Copy } from "lucide-react"
+import { AlertCircle, ArrowLeft, Save, Eye, Plus, Settings, Palette, Share2, Copy, MessageCircleCode } from "lucide-react"
 import { ColorPicker } from "@/components/color-picker"
 import { FormBuilder } from "@/components/form-builder"
+import Link from "next/link"
 
 interface FormData {
   id?: string
@@ -152,6 +153,14 @@ export default function FormEditorPage() {
           </div>
         </div>
         <div className="flex gap-2">
+            <Link href={`/forms/${isNewForm ? "preview" : formData.public_id}/responses`}>
+          <Button variant="outline">
+          <MessageCircleCode className="mr-2 h-4 w-4" />
+          Responses
+          </Button>
+          </Link>
+
+
           <Button variant="outline" onClick={handlePreview}>
             <Eye className="mr-2 h-4 w-4" />
             Preview

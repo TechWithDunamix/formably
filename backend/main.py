@@ -13,6 +13,7 @@ from nexios.middlewares.cors import CORSMiddleware
 from routes.analytics.route import analytics_router
 from routes.public import public_router
 from routes.responses import responses_router
+from routes.templates import templates_router
 
 JWT_Backend = JWTAuthBackend(
     authenticate_func=get_user_by_id
@@ -34,4 +35,5 @@ app.mount_router(forms_router)
 app.mount_router(public_router)
 app.mount_router(responses_router)
 app.mount_router(analytics_router)
+app.mount_router(templates_router)
 app.add_exception_handler(ValidationError,handle_pydantic_error)

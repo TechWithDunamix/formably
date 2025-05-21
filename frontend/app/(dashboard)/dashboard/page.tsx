@@ -7,17 +7,27 @@ import { formsApi } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Plus, FileText, BarChart3, Clock, AlertCircle } from "lucide-react"
+import { Plus, FileText, BarChart3, Clock, AlertCircle, ArrowRight } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 interface Form {
-  id: string
+ id?: string
   title: string
   detail?: string
+  logo?: string
+  cover_image?: string
+  max_response?: number
   is_active: boolean
-  responses_count?: number
-  created_at?: string
-  updated_at?: string
+  as_template?: boolean
+  active_until?: string
+  company_website?: string
+  draft: boolean
+  primary_color: string
+  secondary_color: string
+  collect_email: boolean
+  multi_response: boolean
+  public_id: string
+  sections: any[]
 }
 
 export default function DashboardPage() {
@@ -49,7 +59,7 @@ export default function DashboardPage() {
     <div>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Welcome back, {user?.firstName || "User"}</h1>
+          <h1 className="text-3xl font-bold mb-2">Welcome back, {user?.first_name || "User"}</h1>
           <p className="text-muted-foreground">Here's an overview of your forms and responses</p>
         </div>
         <div className="mt-4 md:mt-0">
@@ -150,46 +160,51 @@ export default function DashboardPage() {
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {forms.slice(0, 6).map((form) => (
-            <Card key={form.id} className="overflow-hidden card-hover">
-              <CardHeader className="pb-2">
-                <CardTitle className="truncate">{form.title}</CardTitle>
-                <CardDescription className="flex items-center">
-                  {form.is_active ? (
-                    <span className="flex items-center text-green-500">
-                      <span className="h-2 w-2 rounded-full bg-green-500 mr-2"></span>
-                      Active
-                    </span>
-                  ) : (
-                    <span className="flex items-center text-muted-foreground">
-                      <span className="h-2 w-2 rounded-full bg-muted-foreground mr-2"></span>
-                      Draft
-                    </span>
-                  )}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center text-sm text-muted-foreground mb-2">
-                  <BarChart3 className="h-4 w-4 mr-1" />
-                  <span>{form.responses_count || 0} responses</span>
+           <Card key={form.id} className="overflow-hidden">
+            <div className="aspect-video w-full overflow-hidden">
+              <img
+                src={form.cover_image || "/placeholder.svg"}
+                alt={form.title}
+        
+                className="w-full h-full object-cover transition-transform hover:scale-105"
+              />
+            </div>
+            <CardHeader className="p-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="text-xl w-2/3 truncate">{form.title}</CardTitle>
                 </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <Clock className="h-4 w-4 mr-1" />
-                  <span>Created {new Date(form.created_at || Date.now()).toLocaleDateString()}</span>
+               
+              </div>
+            </CardHeader>
+
+            <CardContent className="p-4 pt-0 text-sm text-muted-foreground space-y-1">
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                <span>Created on: {new Date(form.created_at || "").toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                <span>Total responses: {form.responses_count || 0}</span>
+              </div>
+               <div className="text-primary text-xs rounded-full">
+                  {form.sections.reduce((total, section) => total + (section.fields?.length || 0), 0)} questions
                 </div>
-              </CardContent>
-              <CardFooter className="flex gap-2">
-                <Link href={`/forms/${form.id}`} className="flex-1">
-                  <Button variant="outline" className="w-full">
-                    Edit
-                  </Button>
+            </CardContent>
+
+            <CardFooter className="p-4 pt-0 flex justify-between">
+              <Button size="sm" asChild>
+                <Link href={`/forms/${form.id}`}>
+                  View Details <ArrowRight className="ml-2 h-3 w-3" />
                 </Link>
-                <Link href={`/forms/${form.id}/responses`} className="flex-1">
-                  <Button variant="secondary" className="w-full">
-                    Responses
-                  </Button>
-                </Link>
-              </CardFooter>
-            </Card>
+              </Button>
+            </CardFooter>
+          </Card>
+
           ))}
         </div>
       )}

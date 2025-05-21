@@ -29,7 +29,16 @@ class Forms(BaseModel):
         default = False
     )
 
+    tag = f.CharField(
+        null = True,
+        max_length =  True
+    )
+
     active_until = f.DatetimeField(null = True)
+
+    public_template = f.BooleanField(
+        default = False
+    )
 
     company_website = f.TextField(
         null = True
