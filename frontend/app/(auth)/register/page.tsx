@@ -14,8 +14,8 @@ import { AlertCircle, Loader2 } from "lucide-react"
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     email: "",
     password: "",
     company: "",
@@ -79,9 +79,9 @@ export default function RegisterPage() {
                 <Label htmlFor="firstName">First name</Label>
                 <Input
                   id="firstName"
-                  name="firstName"
+                  name="first_name"
                   placeholder="John"
-                  value={formData.firstName}
+                  value={formData.first_name}
                   onChange={handleChange}
                   required
                   className="h-12"
@@ -92,9 +92,9 @@ export default function RegisterPage() {
                 <Label htmlFor="lastName">Last name</Label>
                 <Input
                   id="lastName"
-                  name="lastName"
+                  name="last_name"
                   placeholder="Doe"
-                  value={formData.lastName}
+                  value={formData.last_name}
                   onChange={handleChange}
                   className="h-12"
                 />
