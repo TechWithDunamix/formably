@@ -20,6 +20,7 @@ import {
   Copy,
   Pencil,
   Trash2,
+  ArrowRight,
 } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {
@@ -32,13 +33,23 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface Form {
-  id: string
+ id?: string
   title: string
   detail?: string
+  logo?: string
+  cover_image?: string
+  max_response?: number
   is_active: boolean
-  responses_count?: number
-  created_at?: string
-  updated_at?: string
+  as_template?: boolean
+  active_until?: string
+  company_website?: string
+  draft: boolean
+  primary_color: string
+  secondary_color: string
+  collect_email: boolean
+  multi_response: boolean
+  public_id: string
+  sections: any[]
 }
 
 export default function FormsPage() {
@@ -191,94 +202,50 @@ export default function FormsPage() {
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredForms.map((form) => (
-            <Card key={form.id} className="overflow-hidden card-hover">
-              <CardHeader className="pb-2">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1 mr-2">
-                    <CardTitle className="truncate">{form.title}</CardTitle>
-                    <CardDescription className="flex items-center">
-                      {form.is_active ? (
-                        <span className="flex items-center text-green-500">
-                          <span className="h-2 w-2 rounded-full bg-green-500 mr-2"></span>
-                          Active
-                        </span>
-                      ) : (
-                        <span className="flex items-center text-muted-foreground">
-                          <span className="h-2 w-2 rounded-full bg-muted-foreground mr-2"></span>
-                          Draft
-                        </span>
-                      )}
-                    </CardDescription>
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Open menu</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem asChild>
-                        <Link href={`/forms/${form.id}`} className="cursor-pointer">
-                          <Pencil className="mr-2 h-4 w-4" />
-                          <span>Edit</span>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href={`/forms/${form.id}/responses`} className="cursor-pointer">
-                          <BarChart3 className="mr-2 h-4 w-4" />
-                          <span>View Responses</span>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href={`/forms/${form.id}/preview`} className="cursor-pointer">
-                          <ExternalLink className="mr-2 h-4 w-4" />
-                          <span>Preview</span>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => {
-                          navigator.clipboard.writeText(`${window.location.origin}/f/${form.id}`)
-                        }}
-                      >
-                        <Copy className="mr-2 h-4 w-4" />
-                        <span>Copy Link</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => handleDelete(form.id)}
-                        className="text-destructive focus:text-destructive"
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        <span>Delete</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+           <Card key={form.id} className="overflow-hidden">
+            <div className="aspect-video w-full overflow-hidden">
+              <img
+                src={form.cover_image || "/placeholder.svg"}
+                alt={form.title}
+        
+                className="w-full h-full object-cover transition-transform hover:scale-105"
+              />
+            </div>
+            <CardHeader className="p-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="text-xl w-2/3 truncate">{form.title}</CardTitle>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center text-sm text-muted-foreground mb-2">
-                  <BarChart3 className="h-4 w-4 mr-1" />
-                  <span>{form.responses_count || 0} responses</span>
+               
+              </div>
+            </CardHeader>
+
+            <CardContent className="p-4 pt-0 text-sm text-muted-foreground space-y-1">
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                <span>Created on: {new Date(form.created_at || "").toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                <span>Total responses: {form.responses_count || 0}</span>
+              </div>
+               <div className="text-primary text-xs rounded-full">
+                  {form.sections.reduce((total, section) => total + (section.fields?.length || 0), 0)} questions
                 </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <Clock className="h-4 w-4 mr-1" />
-                  <span>Created {new Date(form.created_at || Date.now()).toLocaleDateString()}</span>
-                </div>
-              </CardContent>
-              <CardFooter className="flex gap-2">
-                <Link href={`/forms/${form.id}`} className="flex-1">
-                  <Button variant="outline" className="w-full">
-                    Edit
-                  </Button>
+            </CardContent>
+
+            <CardFooter className="p-4 pt-0 flex justify-between">
+              <Button size="sm" asChild>
+                <Link href={`/forms/${form.id}`}>
+                  View Details <ArrowRight className="ml-2 h-3 w-3" />
                 </Link>
-                <Link href={`/forms/${form.id}/responses`} className="flex-1">
-                  <Button variant="secondary" className="w-full">
-                    Responses
-                  </Button>
-                </Link>
-              </CardFooter>
-            </Card>
+              </Button>
+            </CardFooter>
+          </Card>
           ))}
         </div>
       )}

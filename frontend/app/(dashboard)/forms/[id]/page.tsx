@@ -153,7 +153,7 @@ export default function FormEditorPage() {
           </div>
         </div>
         <div className="flex gap-2">
-            <Link href={`/forms/${isNewForm ? "preview" : formData.public_id}/responses`}>
+            <Link href={`/forms/${isNewForm ? "preview" : formData.id}/responses`}>
           <Button variant="outline">
           <MessageCircleCode className="mr-2 h-4 w-4" />
           Responses
