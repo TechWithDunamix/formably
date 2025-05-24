@@ -291,7 +291,7 @@ export default function PublicFormPage() {
     <div
       className="min-h-screen py-12 md:px-4"
       style={{
-        background: `linear-gradient(to bottom, ${primaryColor}10, transparent)`,
+        background: `linear-gradient(to bottom, ${primaryColor}30, transparent)`,
       }}
     >
       <div className="container max-w-3xl border rounded-lg bg-white md:p-6 mx-auto py-2">
@@ -309,9 +309,9 @@ export default function PublicFormPage() {
   )}
 
   {/* Logo and Title Section */}
-        <div className="text-center relative -mt-12">
+        <div className="text-center relative">
           {formData.logo && (
-            <div className="flex justify-center">
+            <div className="flex justify-center  -mt-12">
               <img
                 src={formData.logo}
                 alt={`${formData.title} logo`}

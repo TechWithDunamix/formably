@@ -28,10 +28,11 @@ def make_key_string_from_dict(dict):
 
 @public_router.get("/{form_id}/details", responses={200: FormResponse, 400: Error400})
 async def get_public_form(req: Request, res: Response, form_id):
+    print(form_id)
     activate_form = await get_active_forms()
-    print(await activate_form, form_id)
     form = await activate_form.filter(public_id=form_id).first()
     if not form:
+        print("Form not found")
         return res.status(404).json({"error": "Form not found"},status_code=404)
 
     if form.active_until and form.active_until < datetime.now(UTC):

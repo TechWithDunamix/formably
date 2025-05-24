@@ -256,6 +256,18 @@ export default function FormEditorPage() {
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
+                  <Label htmlFor="draft">Draft</Label>
+                  <p className="text-sm text-muted-foreground">When draft, your form cannot receive responses</p>
+                </div>
+                <Switch
+                  id="draft"
+                  checked={formData.draft}
+                  onCheckedChange={(checked) => handleSwitchChange("draft", checked)}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
                   <Label htmlFor="is_active">Active</Label>
                   <p className="text-sm text-muted-foreground">When active, your form can receive responses</p>
                 </div>
@@ -403,7 +415,7 @@ export default function FormEditorPage() {
                   <Button
                     variant="outline"
                     onClick={() => {
-                      navigator.clipboard.writeText(`${window.location.origin}/f/${isNewForm ? "preview" : id}`)
+                      navigator.clipboard.writeText(`${window.location.origin}/f/${isNewForm ? "preview" : formData.public_id}`)
                     }}
                   >
                     <Copy className="h-4 w-4" />
