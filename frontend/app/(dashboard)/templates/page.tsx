@@ -212,6 +212,12 @@ export default function FormsPage() {
                   Use Form <ArrowRight className="ml-2 h-3 w-3" />
                
               </Button>
+
+              <Button size="sm" asChild>
+                <Link href={`/forms/${form.id}`}>
+                  View Form <ArrowRight className="ml-2 h-3 w-3" />
+                </Link>
+              </Button>
             </CardFooter>
           </Card>
           ))}
