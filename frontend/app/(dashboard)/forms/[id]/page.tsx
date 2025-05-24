@@ -55,6 +55,7 @@ export default function FormEditorPage() {
     collect_email: true,
     multi_response: true,
     public_id: "",
+    as_template: false,
     sections: [],
   })
   const [isLoading, setIsLoading] = useState(!isNewForm)
@@ -264,7 +265,17 @@ export default function FormEditorPage() {
                   onCheckedChange={(checked) => handleSwitchChange("is_active", checked)}
                 />
               </div>
-
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="collect_email">As Template</Label>
+                  <p className="text-sm text-muted-foreground">Make this form available as a template</p>
+                </div>
+                <Switch
+                  id="as_template"
+                  checked={formData.as_template}
+                  onCheckedChange={(checked) => handleSwitchChange("as_template", checked)}
+                />
+              </div>
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label htmlFor="collect_email">Collect Email</Label>

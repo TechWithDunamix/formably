@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
-import { formsApi } from "@/lib/api"
+import { formsApi,templatesApi } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -36,20 +36,9 @@ interface Form {
  id?: string
   title: string
   detail?: string
-  logo?: string
   cover_image?: string
-  max_response?: number
-  is_active: boolean
-  as_template?: boolean
-  active_until?: string
-  company_website?: string
-  draft: boolean
-  primary_color: string
-  secondary_color: string
-  collect_email: boolean
-  multi_response: boolean
-  public_id: string
-  sections: any[]
+  total_fields?:string
+ 
 }
 
 export default function FormsPage() {
@@ -67,9 +56,9 @@ export default function FormsPage() {
 
       try {
         setIsLoading(true)
-        const response = await formsApi.getAll(token)
+        const response = await templatesApi.getAll(token)
         setForms(response || [])
-        setFilteredForms(response.forms || [])
+        setFilteredForms(response || [])
       } catch (err: any) {
         console.error("Error fetching forms:", err)
         setError(err.message || "Failed to fetch forms")
@@ -89,24 +78,24 @@ export default function FormsPage() {
       result = result.filter((form) => form.title.toLowerCase().includes(searchQuery.toLowerCase()))
     }
 
-    if (statusFilter !== "all") {
-      result = result.filter((form) => (statusFilter === "active" ? form.is_active : !form.is_active))
-    }
+  
 
     setFilteredForms(result)
   }, [forms, searchQuery, statusFilter])
 
-  const handleDelete = async (formId: string) => {
+  const useTemplate = async (templateId: string) => {
     if (!token) return
 
-    if (window.confirm("Are you sure you want to delete this form?")) {
-      try {
-        await formsApi.delete(formId, token)
-        setForms(forms.filter((form) => form.id !== formId))
-      } catch (err: any) {
-        console.error("Error deleting form:", err)
-        setError(err.message || "Failed to delete form")
-      }
+    try {
+      const response = await templatesApi.useTemplate(templateId, token)
+    
+        window.location.href = `/forms/${response.form_id}`
+      
+        setError(response.message || "Failed to use template")
+      
+    } catch (err: any) {
+      console.error("Error using template:", err)
+      setError(err.message || "Failed to use template")
     }
   }
 
@@ -213,15 +202,15 @@ export default function FormsPage() {
 
             <CardContent className="p-4 pt-0 text-sm text-muted-foreground space-y-1">
                <div className="text-primary text-xs rounded-full">
-                  {form.sections.reduce((total, section) => total + (section.fields?.length || 0), 0)} questions
+                  {form.total_fields} questions
                 </div>
             </CardContent>
 
             <CardFooter className="p-4 pt-0 flex justify-between">
-              <Button size="sm" asChild>
-                <Link href={`/forms/${form.id}`}>
+              <Button size="sm"  onClick={() => useTemplate(form.id || "")}>
+               
                   Use Form <ArrowRight className="ml-2 h-3 w-3" />
-                </Link>
+               
               </Button>
             </CardFooter>
           </Card>

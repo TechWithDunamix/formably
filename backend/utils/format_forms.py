@@ -1,5 +1,5 @@
 from models import  Forms, FormSections, FormFields
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from pydantic import BaseModel
 class FormFieldResponse(BaseModel):
     field_name: str
@@ -35,6 +35,14 @@ class FormResponse(BaseModel):
     sections: List[FormSectionResponse]
     created_at: str
     updated_at: str
+
+class FormTemplateResponse(BaseModel):
+    id : Optional[str] = None
+    title: Optional[str] = None
+    detail: Optional[str] = None
+    total_fields: int
+    owner: Optional[str] = None  # Assuming owner information might be available
+    cover_image: Optional[str] = None
 
 
 async def format_form(form :Forms):
@@ -121,4 +129,34 @@ async def format_form(form :Forms):
         public_id=form.public_id
     )
 
+    return response.model_dump()
+
+
+async def format_form_template(form: Forms) -> Dict[str, Any]:
+    """
+    Formats a Forms object into a simplified template response containing only
+    basic information like title, detail, total fields count, and owner.
+    
+    Args:
+        form (Forms): The Forms object to be formatted.
+        
+    Returns:
+        dict: A dictionary with title, detail, total_fields, and owner information.
+    """
+    field_count = 0
+    owner = await form.owner
+    for section in await form.sections.all():
+        field_count += await section.fields.all().count()
+    
+    field_count += await form.fields.filter(section_ref=None).count()
+    
+    response = FormTemplateResponse(
+        id=str(form.id),
+        title=form.title,
+        detail=form.detail or "",
+        total_fields=field_count,
+        cover_image=form.cover_image or None,
+        owner = owner.company or f"{owner.first_name} {owner.last_name}"
+    )
+    
     return response.model_dump()

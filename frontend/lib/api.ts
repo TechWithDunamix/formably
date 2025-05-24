@@ -1,3 +1,4 @@
+import { use } from "react"
 import { config } from "./config"
 
 interface ApiOptions {
@@ -52,6 +53,7 @@ export const formsApi = {
   update: (formId: string, data: any, token: string) =>
     api(`/v1/forms/${formId}/update`, { method: "PUT", body: data, token }),
   delete: (formId: string, token: string) => api(`/v1/forms/${formId}/delete`, { method: "DELETE", token }),
+
 }
 
 // Public APIs
@@ -87,3 +89,9 @@ export const responsesApi = {
 export const analyticsApi = {
   getResponseSummary: (formId: string, token: string) => api(`/v1/analytics/responses/${formId}/summary`, { token }),
 }
+
+export const templatesApi = {
+  getAll: (token: string) => api("/v1/templates/list", { token }),
+  useTemplate: (templateId: string, token: string) =>
+    api(`/v1/templates/${templateId}/use`, { method: "POST", token }),
+  }

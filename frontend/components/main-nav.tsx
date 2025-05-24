@@ -2,17 +2,25 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useAuth } from "@/lib/auth-context"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, FileText, BarChart3, Settings, LogOut, Menu, X, LayoutTemplate, SatelliteDishIcon } from "lucide-react"
-import { useAuth } from "@/lib/auth-context"
-import { useState } from "react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import {
+  LayoutDashboard,
+  FileText,
+  BarChart3,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  LayoutTemplate,
+  SatelliteDishIcon,
+} from "lucide-react"
 
-export function MainNav() {
+export function MainNav({ navOpen, setNavOpen }: { navOpen: boolean, setNavOpen: (value: boolean) => void }) {
   const pathname = usePathname()
   const { logout } = useAuth()
-  const [open, setOpen] = useState(false)
 
   const routes = [
     {
@@ -28,7 +36,7 @@ export function MainNav() {
     {
       name: "Templates",
       path: "/templates",
-      icon: < LayoutTemplate className="h-5 w-5" />,
+      icon: <LayoutTemplate className="h-5 w-5" />,
     },
     {
       name: "Api",
@@ -47,7 +55,7 @@ export function MainNav() {
             "flex items-center gap-2 px-4 py-3 rounded-xl transition-all",
             pathname === route.path ? "bg-primary text-primary-foreground" : "hover:bg-muted",
           )}
-          onClick={() => setOpen(false)}
+          onClick={() => setNavOpen(false)}
         >
           {route.icon}
           <span>{route.name}</span>
@@ -57,7 +65,7 @@ export function MainNav() {
         variant="ghost"
         className="flex items-center gap-2 px-4 py-3 justify-start rounded-xl hover:bg-destructive/10 hover:text-destructive"
         onClick={() => {
-          setOpen(false)
+          setNavOpen(false)
           logout()
         }}
       >
@@ -71,13 +79,8 @@ export function MainNav() {
     <>
       {/* Mobile Navigation */}
       <div className="lg:hidden flex items-center">
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <Menu className="h-6 w-6" />
-              <span className="sr-only">Toggle menu</span>
-            </Button>
-          </SheetTrigger>
+        <Sheet open={navOpen} onOpenChange={setNavOpen}>
+          
           <SheetContent side="left" className="p-0">
             <div className="p-6">
               <div className="flex items-center justify-between mb-8">
@@ -87,7 +90,7 @@ export function MainNav() {
                   </div>
                   <span className="text-xl font-bold">Formably</span>
                 </Link>
-                <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
+                <Button variant="ghost" size="icon" onClick={() => setNavOpen(false)}>
                   <X className="h-5 w-5" />
                   <span className="sr-only">Close</span>
                 </Button>

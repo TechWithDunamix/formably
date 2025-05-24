@@ -62,6 +62,8 @@ class Forms(BaseModel):
     multi_response = f.BooleanField(default = True)
 
     public_id = f.CharField(max_length=100, null=True)
+
+    fields : f.BackwardFKRelation["FormFields"]
     class Meta:
         table = "forms"
 
