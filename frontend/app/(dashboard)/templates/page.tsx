@@ -213,9 +213,9 @@ export default function FormsPage() {
                
               </Button>
 
-              <Button size="sm" asChild>
-                <Link href={`/forms/${form.id}`}>
-                  View Form <ArrowRight className="ml-2 h-3 w-3" />
+              <Button size="sm" variant="secondary" asChild>
+                <Link href={`/templates/${form.id}/preview`}>
+                  Preview <ArrowRight className="ml-2 h-3 w-3" />
                 </Link>
               </Button>
             </CardFooter>

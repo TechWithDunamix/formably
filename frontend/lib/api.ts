@@ -94,4 +94,7 @@ export const templatesApi = {
   getAll: (token: string) => api("/v1/templates/list", { token }),
   useTemplate: (templateId: string, token: string) =>
     api(`/v1/templates/${templateId}/use`, { method: "POST", token }),
+
+  previewTemplate: (templateId: string, token: string) =>
+    api(`/v1/templates/${templateId}/preview`, { token }),
   }

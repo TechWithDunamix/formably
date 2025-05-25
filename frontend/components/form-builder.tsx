@@ -396,7 +396,7 @@ export function FormBuilder({ sections, onChange }: FormBuilderProps) {
 
   return (
     <div className="space-y-6">
-      {sections.map((section, sectionIndex) => (
+      {sections?.map((section, sectionIndex) => (
         <Card key={sectionIndex} className="border-2 border-muted">
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between">

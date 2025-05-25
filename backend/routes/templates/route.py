@@ -3,12 +3,13 @@ from nexios import Router
 from nexios.http import Request, Response
 from dto.responses import Success200, Error400
 from models import Forms
-from utils.format_forms import format_form_template,FormTemplateResponse
+from utils.format_forms import format_form_template,FormTemplateResponse,FormResponse
 from typing import List
 from nexios.auth.decorator import auth
 from models.form_fields import FormFields
 from models.form_sections import FormSections
 from ._models import TemplateResponse
+from utils.format_forms import format_form
 templates_router = Router("/v1/templates", tags=["Templates"])
 
 
@@ -65,3 +66,14 @@ async def use_template(req: Request, res: Response):
     return {"form_id": new_obj.id}
 
      
+@templates_router.get("/{id}/preview", responses=FormResponse, security=[{"bearerAuth": []}])
+@auth(["jwt"])
+async def preview_template(req: Request, res: Response):
+    obj_id = req.path_params.get("id")
+
+    # Fetch the form template
+    old_obj = await Forms.filter(as_template=True, draft=False, id=obj_id).prefetch_related("fields").first()
+    if not old_obj:
+        return res.json({"error": "Template Response", "message": "Template Not Found"})
+
+    return await format_form(old_obj)
