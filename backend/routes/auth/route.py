@@ -5,6 +5,11 @@ from ._models import CreateUser,LoginUser
 from dto.responses import Success200,Error400
 from nexios.auth.backends.jwt import create_jwt
 from datetime import datetime, timedelta, UTC
+from nexios.hooks import after_request
+from utils.mailing import send_signupemail
+from utils.crypto import generate_code
+from models import OTPCode
+from ._models import ConfirmUser
 
 auth_router =  Router(prefix="/v1/auth", tags=["v1","auth"])
 
@@ -16,11 +21,13 @@ auth_router =  Router(prefix="/v1/auth", tags=["v1","auth"])
                       400:Error400
                   })
 
+@after_request(send_signupemail)
 async def createNewUser(req :Request, res: Response):
     data = CreateUser(**await req.json)
     if await User.filter(email = data.email).exists():
         return res.json({"error":"User already exists"},status_code=400)
     user= await User.create_user(**data.model_dump())
+    req.state.user = user
     return {"Success":"User Created Successfully"}
 
 
@@ -43,3 +50,24 @@ async def login(req :Request, res: Response):
         "user_id":str(user.id),
         "exp" : datetime.now(UTC) + timedelta(days=7)
     }),"user":user.to_dict()}
+
+
+@auth_router.post("/confirm",
+            summary="Confirm User",
+            request_model=ConfirmUser,
+            responses={
+                200:Success200,
+                400:Error400
+            })
+async def confirm(req :Request, res: Response):
+    data = ConfirmUser(**await req.json)
+    otp = await OTPCode.verify_code(data.user_id, data.code)
+    if not otp:
+        return res.json({"error":"Invalid Code"},status_code=400)
+    
+    otp.used = True
+    user=  await otp.user
+    user.is_activate = True
+    await user.save()
+    await otp.save()
+    return res.json({"Success":"User Confirmed Successfully"})

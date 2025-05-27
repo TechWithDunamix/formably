@@ -38,6 +38,8 @@ export async function api<T>(endpoint: string, options: ApiOptions = {}): Promis
 export const authApi = {
   register: (data: any) => api("/v1/auth/register", { method: "POST", body: data }),
   login: (data: any) => api("/v1/auth/login", { method: "POST", body: data }),
+  confirm: (data :any) => api(`/v1/auth/confirm`,{ method: "POST", body: data }),
+  
 }
 
 // Forms APIs
@@ -98,3 +100,5 @@ export const templatesApi = {
   previewTemplate: (templateId: string, token: string) =>
     api(`/v1/templates/${templateId}/preview`, { token }),
   }
+
+  

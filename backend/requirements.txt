@@ -10,3 +10,4 @@ user-agents
 dotenv
 bcrypt
 asyncpg
+jinja2

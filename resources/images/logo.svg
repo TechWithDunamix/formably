@@ -1,0 +1,12 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="brandGradient" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7C3AED"/> <!-- brand-purple -->
+      <stop offset="100%" stop-color="#EC4899"/> <!-- brand-pink -->
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="32" height="32" rx="6" fill="url(#brandGradient)"/>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="16" font-family="'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif" font-weight="600" letter-spacing="0.5px">
+    F
+  </text>
+</svg>

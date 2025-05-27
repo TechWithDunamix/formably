@@ -8,9 +8,11 @@ export default function LandingPage() {
     <div className="flex flex-col min-h-screen">
       <header className="px-4 lg:px-6 h-14 flex items-center">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
-            F
-          </div>
+          <img
+            src="/logo.svg"
+            alt="Formably Logo"
+            className="h-8 w-8"
+          />
           <span className="text-2xl font-cursive gradient-text">Formably</span>
         </Link>
         <nav className="ml-auto flex gap-4 sm:gap-6">

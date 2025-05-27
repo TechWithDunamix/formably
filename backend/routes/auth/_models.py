@@ -11,3 +11,8 @@ class CreateUser(BaseModel):
 class LoginUser(BaseModel):
     email :str
     password :str
+
+
+class ConfirmUser(BaseModel):
+    user_id :str
+    code :str
