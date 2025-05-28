@@ -1,5 +1,6 @@
 from nexios.http import Request, Response
 from nexios.routing import Router
+from pydantic import create_model
 from models import User
 from ._models import CreateUser,LoginUser
 from dto.responses import Success200,Error400
@@ -71,3 +72,28 @@ async def confirm(req :Request, res: Response):
     await user.save()
     await otp.save()
     return res.json({"Success":"User Confirmed Successfully"})
+
+
+@auth_router.post("/forgot-password",
+            summary="Forgot Password",
+            request_model=create_model("ForgotPassword", email=(str, ...)),
+            responses={
+                200:Success200,
+                400:Error400
+            })
+async def forgot_password(req :Request, res: Response):
+    data = await req.json
+    email = data.get("email")
+    if not email:
+        return res.json({"error":"Email is required"},status_code=400)
+    
+    user = await User.filter(email=email).first()
+    if not user:
+        return res.json({"error":"User not found"},status_code=400)
+    
+    code = generate_code()
+    otp = await OTPCode.create(user=user, code=code)
+    
+    # Here you would send the code to the user's email
+    # For now, we just return the code in the response
+    return {"code": otp.code}

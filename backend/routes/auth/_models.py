@@ -16,3 +16,4 @@ class LoginUser(BaseModel):
 class ConfirmUser(BaseModel):
     user_id :str
     code :str
+    
