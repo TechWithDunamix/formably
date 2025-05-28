@@ -170,6 +170,14 @@ async def send_signupemail(req :Request, res :Response):
         user.otp = otp
         await user.save()
         
+async def send_reset_password_email(otp_code :str, user :User):
+    FRONTENT_URL = os.getenv("FRONTEND_URL","http://localhost:3000") #ensure this is replaced in production 
+   
+    template =jinja2_env.get_template("reset-password.html")
+    confirm_url = f"{FRONTENT_URL}/reset-password/?user_id={user.id}&code={otp_code}"
+    mail = mailer.send_email(user.email, "Formably : Reset Password", template.render(reset_url = confirm_url,user = user),is_html=True)
+    if not mail:
+        logging.error("Failed to send reset password email")
         
     
     

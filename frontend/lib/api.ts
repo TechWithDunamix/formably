@@ -39,6 +39,8 @@ export const authApi = {
   register: (data: any) => api("/v1/auth/register", { method: "POST", body: data }),
   login: (data: any) => api("/v1/auth/login", { method: "POST", body: data }),
   confirm: (data :any) => api(`/v1/auth/confirm`,{ method: "POST", body: data }),
+  forgotPassword: (data: any) => api("/v1/auth/forgot-password", { method: "POST", body: data }),
+  resetPassword: (data: any, user_id: string, code :string) => api(`/v1/auth/reset-password?user_id=${user_id}&code=${code}`, { method: "POST", body: data }),
   
 }
 
