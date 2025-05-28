@@ -103,4 +103,10 @@ export const templatesApi = {
     api(`/v1/templates/${templateId}/preview`, { token }),
   }
 
+export const accountApi = {
+  getMe: (token: string) => api("/v1/account/me", { token }),
+  updateProfile: (data: any, token: string) => api("/v1/account/update", { method: "PUT", body: data, token }),
+
+}
+
   

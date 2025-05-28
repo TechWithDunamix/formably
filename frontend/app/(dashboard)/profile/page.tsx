@@ -7,21 +7,57 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { User, Mail, Lock, Save, Send } from "lucide-react"
+import { accountApi, authApi } from "@/lib/api"
+import { useAuth } from "@/lib/auth-context"
+import { useRouter } from "next/navigation"
 
 export default function Component() {
   const [firstName, setFirstName] = useState("John")
   const [lastName, setLastName] = useState("Doe")
   const [email, setEmail] = useState("john.doe@example.com")
   const [resetEmail, setResetEmail] = useState("")
+  const [profileError, setProfileError] = useState("")
+  const [resetError, setResetError] = useState("")
+  const { token } = useAuth()
+  const router = useRouter()
 
-  const handleSaveProfile = () => {
-    // Handle profile save logic here
-    console.log("Saving profile:", { firstName, lastName, email })
+  const handleSaveProfile = async () => {
+    if (!token) return
+
+    try {
+      setProfileError("")
+      const updatedProfile = {
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+      }
+      await accountApi.updateProfile(updatedProfile, token)
+      const currentSession = JSON.parse(localStorage.getItem("formably_user"))
+      currentSession.first_name = firstName
+      currentSession.last_name = lastName
+      currentSession.email = email
+      localStorage.setItem("formably_user", JSON.stringify(currentSession))
+      router.refresh()
+    } catch (error) {
+      console.error("Error saving profile:", error)
+      setProfileError("Failed to save profile. Please try again.")
+    }
   }
 
-  const handlePasswordReset = () => {
-    // Handle password reset request logic here
-    console.log("Requesting password reset for:", resetEmail)
+  const handlePasswordReset = async () => {
+    if (!resetEmail) {
+      setResetError("Please enter an email address.")
+      return
+    }
+
+    try {
+      setResetError("")
+      await authApi.forgotPassword({ email: resetEmail })
+      console.log("Password reset request sent successfully.")
+    } catch (error) {
+      console.error("Error resetting password:", error)
+      setResetError("Failed to send reset link. Please try again.")
+    }
   }
 
   return (
@@ -76,8 +112,11 @@ export default function Component() {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+            {profileError && (
+              <p className="text-sm text-red-600">{profileError}</p>
+            )}
             <div className="flex justify-end">
-              <Button onClick={handleSaveProfile} className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700">
+              <Button onClick={handleSaveProfile} className="flex items-center gap-2 ">
                 <Save className="h-4 w-4" />
                 Save Changes
               </Button>
@@ -110,6 +149,9 @@ export default function Component() {
                 A secure link will be sent to your email address. Click the link to reset your password.
               </p>
             </div>
+            {resetError && (
+              <p className="text-sm text-red-600">{resetError}</p>
+            )}
             <Separator />
             <div className="flex justify-end">
               <Button
