@@ -10,7 +10,31 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Formably - Modern Form Builder",
   description: "Create beautiful forms with ease",
-    generator: 'v0.dev'
+  icons:{
+    icon:"/logo.svg"
+  },
+    robots: {
+      index: true,
+    },
+  openGraph: {
+    title: "Formably - Modern Form Builder",
+    description: "Create beautiful forms with ease",
+    url: "https://formably.v0.dev",
+    siteName: "Formably",
+    images: [
+      {
+        url: "https://formably.v0.dev/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Formably - Modern Form Builder",
+      },
+    ],
+  },
+  twitter: {
+    title: "Formably - Modern Form Builder",
+    description: "Create beautiful forms with ease",
+    card: "summary_large_image",
+  },
 }
 
 export default function RootLayout({

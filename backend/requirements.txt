@@ -11,3 +11,5 @@ dotenv
 bcrypt
 asyncpg
 jinja2
+gunicorn
+pydantic[email]

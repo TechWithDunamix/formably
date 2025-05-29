@@ -37,12 +37,7 @@ export function MainNav({ navOpen, setNavOpen }: { navOpen: boolean, setNavOpen:
       name: "Templates",
       path: "/templates",
       icon: <LayoutTemplate className="h-5 w-5" />,
-    },
-    {
-      name: "Api",
-      path: "/settings",
-      icon: <SatelliteDishIcon className="h-5 w-5" />,
-    },
+    }
   ]
 
   const NavLinks = () => (
