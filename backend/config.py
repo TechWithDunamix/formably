@@ -6,7 +6,9 @@ try:
     load_dotenv()
     env_config = {key: value for key, value in os.environ.items()}
 except ImportError:
-    env_config = {}
+    env_config = {"":""}
+
+print("Env Config", env_config)
 
 default_config = {
     "debug": True,

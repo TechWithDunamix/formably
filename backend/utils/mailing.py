@@ -117,12 +117,12 @@ class SMTPMailer:
 
 
 smtp_config = {
-    "smtp_name": "buzzbuntu",
-    "server": "smtp.zoho.com",
+    "smtp_name": "Formably",
+    "server": os.getenv("SMTP_SERVER", "smtp.mailgun.org"),
     "port": 587,
     "security": "TLS",
-    "username": "joseph.mmadubuike@buzzbuntu.com",
-    "password": "XJmpnFNgQTYg"
+    "username": os.getenv("SMTP_USER"),
+    "password": os.getenv("SMTP_PASSWORD"),
 }
 mailer = SMTPMailer(smtp_server=smtp_config["server"],
                     smtp_port=smtp_config["port"],
