@@ -1,8 +1,14 @@
-import type React from "react"
+import { Suspense } from "react";
+import type React from "react";
+
 export default function AuthLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  return children
+  return (
+    <Suspense fallback={<div>Loading auth page...</div>}>
+      {children}
+    </Suspense>
+  );
 }
