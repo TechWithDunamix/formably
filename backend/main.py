@@ -38,3 +38,5 @@ app.mount_router(analytics_router)
 app.mount_router(templates_router)
 app.mount_router(accounts_router)
 app.add_exception_handler(ValidationError,handle_pydantic_error)
+
+app._setup_openapi()
