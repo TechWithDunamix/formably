@@ -21,6 +21,7 @@ import {
   CheckSquare,
   AlignLeft,
   Sliders,
+  Cog
 } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -494,9 +495,9 @@ export function FormBuilder({ sections, onChange }: FormBuilderProps) {
                               }
                             >
                               {expandedField?.section === sectionIndex && expandedField?.field === fieldIndex ? (
-                                <ChevronUp className="h-4 w-4" />
+                                <Cog className="h-4 w-4" />
                               ) : (
-                                <ChevronDown className="h-4 w-4" />
+                                <Cog className="h-4 w-4" />
                               )}
                             </Button>
                             <Button variant="ghost" size="icon" onClick={() => deleteField(sectionIndex, fieldIndex)}>

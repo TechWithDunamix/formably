@@ -56,15 +56,19 @@ async def submit_form(req: Request, res: Response, form_id):
         return res.status(404).json({"error": "Form not found"},status_code=404)
     
     form_data = await format_form(form)
+    print(form_data)
     pydantic_model = create_model_from_form(form_data)
-    form_data = pydantic_model(**await req.json)
+    print("pydantic_model", pydantic_model)
+    request_data = await req.json
+    print("request_data", request_data)
+    form_data = pydantic_model(**request_data)
     user_agent = parse(req.headers.get("User-Agent", ""))
     # print(user_agent.browser.family)
     # print(user_agent.os.family)
     # print(user_agent.device.family)
     # print(user_agent.device.brand)
 
-    if await form.responses.all().count() > form.max_response:
+    if form.max_response and await form.responses.all().count() > form.max_response:
         return res.json({"error": "Response limit exceeded"},status_code=400)
     
     await FormResponse.create(

@@ -152,6 +152,7 @@ jinja2_env = Environment(
 async def send_signupemail(req :Request, res :Response):
     FRONTENT_URL = os.getenv("FRONTEND_URL","http://localhost:3000") #ensure this is replaced in production 🤣
     user:User = req.state.user
+    print(user)
     
     if user:
         retries = 3
@@ -171,6 +172,7 @@ async def send_signupemail(req :Request, res :Response):
         await user.save()
         
 async def send_reset_password_email(otp_code :str, user :User):
+    print(user)
     FRONTENT_URL = os.getenv("FRONTEND_URL","http://localhost:3000") #ensure this is replaced in production 
    
     template =jinja2_env.get_template("reset-password.html")

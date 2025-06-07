@@ -76,6 +76,7 @@ async def create_form(req: Request, res: Response):
                   security=[{"bearerAuth": []}],
                   parameters=[Query(name="limit"), Query(name="offset")],
                   responses={200: FormResponse, 400: Error400})
+@auth(["jwt"])
 async def list_forms(req: Request, res: Response):
         user = req.user
         limit = int(req.query_params.get("limit",20))
