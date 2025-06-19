@@ -21,7 +21,8 @@ import {
   CheckSquare,
   AlignLeft,
   Sliders,
-  Cog
+  Cog,
+  CircleDot,
 } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -42,11 +43,11 @@ const fieldTypes = [
   { value: "multiselect", label: "Multi-select", icon: <CheckSquare className="h-4 w-4" /> },
   { value: "textarea", label: "Long Text", icon: <AlignLeft className="h-4 w-4" /> },
   { value: "scale", label: "Rating Scale", icon: <Sliders className="h-4 w-4" /> },
-  { value: "checkbox", label: "Checkboxes", icon: <CheckSquare className="h-4 w-4" /> },
+  { value: "radio", label: "Radio Buttons", icon: <CircleDot className="h-4 w-4" /> },
 ]
 
 export function FormBuilder({ sections, onChange }: FormBuilderProps) {
-  const [expandedSection, setExpandedSection] = useState<number | null>(null)
+  const [expandedSection, setExpandedSection] = useState<number | null>(1)
   const [expandedField, setExpandedField] = useState<{ section: number; field: number } | null>(null)
 
   const addSection = () => {
@@ -99,7 +100,9 @@ export function FormBuilder({ sections, onChange }: FormBuilderProps) {
 
   const deleteField = (sectionIndex: number, fieldIndex: number) => {
     const newSections = [...sections]
-    newSections[sectionIndex].fields = newSections[sectionIndex].fields.filter((_, i) => i !== fieldIndex)
+    newSections[sectionIndex].fields = newSections[sectionIndex].fields.filter(
+      (_: any, i: number) => i !== fieldIndex,
+    )
     onChange(newSections)
   }
 
@@ -151,7 +154,7 @@ export function FormBuilder({ sections, onChange }: FormBuilderProps) {
                   type="number"
                   value={constraints.min_length || ""}
                   onChange={(e) => {
-                    const newConstraints = { ...constraints, min_length: Number.parseInt(e.target.value) || "" }
+                    const newConstraints = { ...constraints, min_length: Number.parseInt(e.target.value) || null }
                     updateField(sectionIndex, fieldIndex, { constraints: newConstraints })
                   }}
                   placeholder="Optional"
@@ -164,7 +167,7 @@ export function FormBuilder({ sections, onChange }: FormBuilderProps) {
                   type="number"
                   value={constraints.max_length || ""}
                   onChange={(e) => {
-                    const newConstraints = { ...constraints, max_length: Number.parseInt(e.target.value) || "" }
+                    const newConstraints = { ...constraints, max_length: Number.parseInt(e.target.value) || null }
                     updateField(sectionIndex, fieldIndex, { constraints: newConstraints })
                   }}
                   placeholder="Optional"
@@ -198,7 +201,7 @@ export function FormBuilder({ sections, onChange }: FormBuilderProps) {
                 type="number"
                 value={constraints.min || ""}
                 onChange={(e) => {
-                  const newConstraints = { ...constraints, min: Number.parseInt(e.target.value) || "" }
+                  const newConstraints = { ...constraints, min: Number.parseInt(e.target.value) || null }
                   updateField(sectionIndex, fieldIndex, { constraints: newConstraints })
                 }}
                 placeholder="Optional"
@@ -211,7 +214,7 @@ export function FormBuilder({ sections, onChange }: FormBuilderProps) {
                 type="number"
                 value={constraints.max || ""}
                 onChange={(e) => {
-                  const newConstraints = { ...constraints, max: Number.parseInt(e.target.value) || "" }
+                  const newConstraints = { ...constraints, max: Number.parseInt(e.target.value) || null }
                   updateField(sectionIndex, fieldIndex, { constraints: newConstraints })
                 }}
                 placeholder="Optional"
@@ -282,7 +285,7 @@ export function FormBuilder({ sections, onChange }: FormBuilderProps) {
 
       case "select":
       case "multiselect":
-      case "checkbox":
+      case "radio":
         return (
           <div className="space-y-4">
             <div className="space-y-2">
@@ -396,31 +399,32 @@ export function FormBuilder({ sections, onChange }: FormBuilderProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 ">
       {sections?.map((section, sectionIndex) => (
-        <Card key={sectionIndex} className="border-2 border-muted">
-          <CardHeader className="pb-3">
-            <div className="flex items-start justify-between">
-              <div className="space-y-1 flex-1 mr-4">
+        <Card key={sectionIndex} className="border-2 border-primary/40 transition-all duration-300 rounded-lg mb-8 p-6">
+          <CardHeader className="pb-6 my-2 bg-background/80 border-b border-primary/20 rounded-t-lg px-4">
+            <div className="flex items-start justify-between gap-6">
+              <div className="space-y-3 flex-1 mr-4">
                 <Input
                   value={section.title}
                   onChange={(e) => updateSection(sectionIndex, { title: e.target.value })}
-                  className="font-semibold text-lg"
+                  className="font-semibold text-lg border-b-2 border-primary/30 focus:border-primary/80 transition-colors bg-transparent py-3 px-2 focus:outline-none focus:ring-0"
                   placeholder="Section Title"
                 />
                 <Textarea
                   value={section.description || ""}
                   onChange={(e) => updateSection(sectionIndex, { description: e.target.value })}
                   placeholder="Section Description (optional)"
-                  className="resize-none"
+                  className="resize-none border-b border-primary/10 bg-transparent py-2 px-2 focus:outline-none focus:ring-0"
                   rows={2}
                 />
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-4">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setExpandedSection(expandedSection === sectionIndex ? null : sectionIndex)}
+                  className="transition-transform duration-300"
                 >
                   {expandedSection === sectionIndex ? (
                     <ChevronUp className="h-4 w-4" />
@@ -436,24 +440,24 @@ export function FormBuilder({ sections, onChange }: FormBuilderProps) {
           </CardHeader>
 
           <Collapsible open={expandedSection === sectionIndex}>
-            <CollapsibleContent>
-              <CardContent className="pb-3">
-                <div className="space-y-4">
+            <CollapsibleContent className="transition-all duration-500 ease-in-out">
+              <CardContent className="pb-6 px-4">
+                <div className="space-y-6">
                   {section.fields.map((field: any, fieldIndex: number) => (
-                    <Card key={fieldIndex} className="border border-muted">
-                      <CardHeader className="py-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 flex-1">
-                            <div className="flex items-center justify-center w-8 h-8 rounded-md bg-muted">
+                    <Card key={fieldIndex} className="border border-primary/30 rounded-md transition-all duration-300 mb-6 p-4">
+                      <CardHeader className="py-4 bg-background/70 border-b border-primary/10 rounded-t-md px-2">
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-4 flex-1">
+                            <div className="flex items-center justify-center w-10 h-10 rounded-md border border-primary/20 bg-background">
                               {getFieldIcon(field.field_type)}
                             </div>
                             <Input
                               value={field.field_name}
                               onChange={(e) => updateField(sectionIndex, fieldIndex, { field_name: e.target.value })}
-                              className="max-w-[200px]"
+                              className="max-w-[240px] border-b border-primary/20 bg-transparent py-2 px-2 focus:outline-none focus:ring-0"
                               placeholder="Field Name"
                             />
-                            <div className="flex items-center ml-2">
+                            <div className="flex items-center ml-4">
                               <Switch
                                 id={`required_${sectionIndex}_${fieldIndex}`}
                                 checked={field.required}
@@ -466,7 +470,7 @@ export function FormBuilder({ sections, onChange }: FormBuilderProps) {
                               </Label>
                             </div>
                           </div>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-2">
                             <Button
                               variant="ghost"
                               size="icon"
@@ -493,6 +497,7 @@ export function FormBuilder({ sections, onChange }: FormBuilderProps) {
                                     : { section: sectionIndex, field: fieldIndex },
                                 )
                               }
+                              className="transition-transform duration-300"
                             >
                               {expandedField?.section === sectionIndex && expandedField?.field === fieldIndex ? (
                                 <Cog className="h-4 w-4" />
@@ -510,9 +515,9 @@ export function FormBuilder({ sections, onChange }: FormBuilderProps) {
                       <Collapsible
                         open={expandedField?.section === sectionIndex && expandedField?.field === fieldIndex}
                       >
-                        <CollapsibleContent>
-                          <CardContent className="py-0 space-y-4">
-                            <div className="space-y-2">
+                        <CollapsibleContent className="transition-all duration-500 ease-in-out">
+                          <CardContent className="py-2 px-2 space-y-6">
+                            <div className="space-y-3">
                               <Label htmlFor={`field_type_${sectionIndex}_${fieldIndex}`}>Field Type</Label>
                               <Select
                                 value={field.field_type}
@@ -520,7 +525,7 @@ export function FormBuilder({ sections, onChange }: FormBuilderProps) {
                                   updateField(sectionIndex, fieldIndex, { field_type: value, constraints: {} })
                                 }
                               >
-                                <SelectTrigger id={`field_type_${sectionIndex}_${fieldIndex}`}>
+                                <SelectTrigger id={`field_type_${sectionIndex}_${fieldIndex}`} className="border-primary/20">
                                   <SelectValue placeholder="Select field type" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -552,8 +557,8 @@ export function FormBuilder({ sections, onChange }: FormBuilderProps) {
                 </div>
               </CardContent>
 
-              <CardFooter>
-                <Button variant="outline" onClick={() => addField(sectionIndex)} className="w-full">
+              <CardFooter className="pt-6 px-4">
+                <Button variant="outline" onClick={() => addField(sectionIndex)} className="w-full border-primary/30 py-3">
                   <Plus className="mr-2 h-4 w-4" />
                   Add Field
                 </Button>
@@ -563,7 +568,7 @@ export function FormBuilder({ sections, onChange }: FormBuilderProps) {
         </Card>
       ))}
 
-      <Button variant="outline" onClick={addSection} className="w-full">
+      <Button variant="outline" onClick={addSection} className="w-full border-primary/40 py-4 text-lg">
         <Plus className="mr-2 h-4 w-4" />
         Add Section
       </Button>

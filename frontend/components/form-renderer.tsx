@@ -196,8 +196,36 @@ export function FormRenderer({ sections, values, onChange, validationErrors }: F
           </div>
         )
 
+      case "radio":
+        return (
+          <div className="space-y-2" data-error={!!error}>
+            <Label className="font-medium text-sm">
+              {field.field_name}
+              {field.required && <span className="text-destructive"> *</span>}
+            </Label>
+            <div className="space-y-2">
+              {(constraints.items || []).map((item: string, index: number) => (
+                <div key={index} className="flex items-center">
+                  <input
+                    type="radio"
+                    id={`${field.field_name}_${index}`}
+                    name={field.field_name}
+                    value={item}
+                    checked={value === item}
+                    onChange={(e) => onChange(field.field_name, e.target.value)}
+                    className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+                  />
+                  <Label htmlFor={`${field.field_name}_${index}`} className="ml-2 text-sm font-normal">
+                    {item}
+                  </Label>
+                </div>
+              ))}
+            </div>
+            {error && <p className="text-sm text-destructive">{error}</p>}
+          </div>
+        )
+
       case "multiselect":
-      case "checkbox":
         const selectedValues = Array.isArray(value) ? value : []
 
         return (

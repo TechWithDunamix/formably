@@ -28,7 +28,7 @@ app.add_middleware(
     AuthenticationMiddleware(backend=JWT_Backend)
 )
 app.add_middleware(CORSMiddleware())
-register_tortoise(app, config=db_config)
+register_tortoise(app,config=db_config)
 
 app.mount_router(auth_router)
 app.mount_router(forms_router)

@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field, EmailStr, field_validator, create_model
 from typing import Any, List, Optional, Dict, Union, get_args, get_origin
 from uuid import UUID
 from datetime import datetime, date
+from functools import partial
 
 
 def get_type(field_type: str):
@@ -20,7 +21,6 @@ def get_type(field_type: str):
         "radio": str,
         "checkbox": List[str],
         "multiselect": List[str],
-        # Removed json field type
     }.get(field_type, Any)
 
 
@@ -28,12 +28,15 @@ def create_model_from_form(form: Dict[str, Any]) -> BaseModel:
     fields: Dict[str, tuple] = {}
     validators: Dict[str, classmethod] = {}
 
-    for section in form.get("sections", []):
-        for field in section.get("fields", []):
+    for section_idx, section in enumerate(form.get("sections", [])):
+        for field_idx, field in enumerate(section.get("fields", [])):
             name = field["field_name"]
             type_name = field["field_type"]
             required = field.get("required", False)
             constraints = field.get("constraints") or {}
+            
+            # Create unique identifier for this field
+            field_id = f"{name}_s{section_idx}_f{field_idx}"
 
             pyd_type = get_type(type_name)
             default = ... if required else None
@@ -73,30 +76,34 @@ def create_model_from_form(form: Dict[str, Any]) -> BaseModel:
                     if isinstance(min_date, str):
                         min_date = date.fromisoformat(min_date)
 
-                    @field_validator(name, mode="before")
-                    def validate_min_date(cls, v):
-                        if isinstance(v, str):
-                            v = date.fromisoformat(v)
-                        if v < min_date:
-                            raise ValueError(f"Date must be on or after {min_date}")
-                        return v
+                    def make_min_date_validator(min_date, name):
+                        @field_validator(name, mode="before")
+                        def validator(cls, v):
+                            if isinstance(v, str):
+                                v = date.fromisoformat(v)
+                            if v < min_date:
+                                raise ValueError(f"Date must be on or after {min_date}")
+                            return v
+                        return validator
 
-                    validators[f"validate_{name}_min"] = validate_min_date
+                    validators[f"validate_{field_id}_min_date"] = make_min_date_validator(min_date, name)
 
                 if "max_date" in constraints:
                     max_date = constraints["max_date"]
                     if isinstance(max_date, str):
                         max_date = date.fromisoformat(max_date)
 
-                    @field_validator(name, mode="before")
-                    def validate_max_date(cls, v):
-                        if isinstance(v, str):
-                            v = date.fromisoformat(v)
-                        if v > max_date:
-                            raise ValueError(f"Date must be on or before {max_date}")
-                        return v
+                    def make_max_date_validator(max_date, name):
+                        @field_validator(name, mode="before")
+                        def validator(cls, v):
+                            if isinstance(v, str):
+                                v = date.fromisoformat(v)
+                            if v > max_date:
+                                raise ValueError(f"Date must be on or before {max_date}")
+                            return v
+                        return validator
 
-                    validators[f"validate_{name}_max"] = validate_max_date
+                    validators[f"validate_{field_id}_max_date"] = make_max_date_validator(max_date, name)
 
             # Datetime constraints
             if type_name == "datetime":
@@ -105,31 +112,36 @@ def create_model_from_form(form: Dict[str, Any]) -> BaseModel:
                     if isinstance(min_datetime, str):
                         min_datetime = datetime.fromisoformat(min_datetime)
 
-                    @field_validator(name, mode="before")
-                    def validate_min_datetime(cls, v):
-                        if isinstance(v, str):
-                            v = datetime.fromisoformat(v)
-                        if v < min_datetime:
-                            raise ValueError(f"Datetime must be on or after {min_datetime}")
-                        return v
+                    def make_min_datetime_validator(min_datetime, name):
+                        @field_validator(name, mode="before")
+                        def validator(cls, v):
+                            if isinstance(v, str):
+                                v = datetime.fromisoformat(v)
+                            if v < min_datetime:
+                                raise ValueError(f"Datetime must be on or after {min_datetime}")
+                            return v
+                        return validator
 
-                    validators[f"validate_{name}_min"] = validate_min_datetime
+                    validators[f"validate_{field_id}_min_datetime"] = make_min_datetime_validator(min_datetime, name)
 
                 if "max_datetime" in constraints:
                     max_datetime = constraints["max_datetime"]
                     if isinstance(max_datetime, str):
                         max_datetime = datetime.fromisoformat(max_datetime)
 
-                    @field_validator(name, mode="before")
-                    def validate_max_datetime(cls, v):
-                        if isinstance(v, str):
-                            v = datetime.fromisoformat(v)
-                        if v > max_datetime:
-                            raise ValueError(f"Datetime must be on or before {max_datetime}")
-                        return v
+                    def make_max_datetime_validator(max_datetime, name):
+                        @field_validator(name, mode="before")
+                        def validator(cls, v):
+                            if isinstance(v, str):
+                                v = datetime.fromisoformat(v)
+                            if v > max_datetime:
+                                raise ValueError(f"Datetime must be on or before {max_datetime}")
+                            return v
+                        return validator
 
-                    validators[f"validate_{name}_max"] = validate_max_datetime
+                    validators[f"validate_{field_id}_max_datetime"] = make_max_datetime_validator(max_datetime, name)
 
+            # Checkbox/multiselect constraints
             if type_name in {"checkbox", "multiselect"}:
                 if "min_items" in constraints:
                     kwargs["min_length"] = constraints["min_items"]
@@ -138,27 +150,32 @@ def create_model_from_form(form: Dict[str, Any]) -> BaseModel:
                 if "items" in constraints:
                     valid_choices = constraints["items"]
 
-                    @field_validator(name, mode="before")
-                    def validate_list_items(cls, v):
-                        if not isinstance(v, list):
-                            raise ValueError(f"{name} must be a list")
-                        invalid = [item for item in v if item not in valid_choices]
-                        if invalid:
-                            raise ValueError(f"Invalid choices in {name}: {invalid}")
-                        return v
+                    def make_list_validator(choices, name):
+                        @field_validator(name, mode="before")
+                        def validator(cls, v):
+                            if not isinstance(v, list):
+                                raise ValueError(f"{name} must be a list")
+                            invalid = [item for item in v if item not in choices]
+                            if invalid:
+                                raise ValueError(f"Invalid choices in {name}: {invalid}")
+                            return v
+                        return validator
 
-                    validators[f"validate_{name}_items"] = validate_list_items
+                    validators[f"validate_{field_id}_items"] = make_list_validator(valid_choices, name)
 
+            # Select/radio constraints
             if type_name in {"select", "radio"} and "items" in constraints:
                 valid_choices = constraints["items"]
 
-                @field_validator(name, mode="before")
-                def validate_choice(cls, v):
-                    if v not in valid_choices:
-                        raise ValueError(f"{name} must be one of {valid_choices}")
-                    return v
+                def make_choice_validator(choices, name):
+                    @field_validator(name, mode="before")
+                    def validator(cls, v):
+                        if v not in choices:
+                            raise ValueError(f"{name} must be one of {choices}")
+                        return v
+                    return validator
 
-                validators[f"validate_{name}"] = validate_choice
+                validators[f"validate_{field_id}_choice"] = make_choice_validator(valid_choices, name)
 
             final_type = Optional[pyd_type] if not required else pyd_type
             fields[name] = (final_type, Field(default, **kwargs))
@@ -167,6 +184,7 @@ def create_model_from_form(form: Dict[str, Any]) -> BaseModel:
     return create_model(model_name, __validators__=validators, **fields)
 
 
+# The make_optional function remains unchanged
 def make_optional(model: type[BaseModel]) -> type[BaseModel]:
     fields = {}
 

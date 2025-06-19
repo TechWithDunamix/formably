@@ -57,11 +57,12 @@ async def submit_form(req: Request, res: Response, form_id):
     
     form_data = await format_form(form)
     print(form_data)
+    print(form_data)
     pydantic_model = create_model_from_form(form_data)
     print("pydantic_model", pydantic_model)
     request_data = await req.json
     print("request_data", request_data)
-    # form_data = pydantic_model(**request_data)
+    form_data = pydantic_model(**request_data)
     user_agent = parse(req.headers.get("User-Agent", ""))
     # print(user_agent.browser.family)
     # print(user_agent.os.family)
@@ -77,6 +78,6 @@ async def submit_form(req: Request, res: Response, form_id):
         device_os = str(user_agent.os.family),
         device_family = str(user_agent.device.family),
         device_brand = str(user_agent.device.brand),
-        response = make_key_string_from_dict(request_data),
+        response = make_key_string_from_dict(form_data.dict()),
     )
     return res.json({"success": "Form submitted successfully"},status_code=200) 

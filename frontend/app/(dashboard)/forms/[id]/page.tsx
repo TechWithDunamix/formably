@@ -49,7 +49,7 @@ export default function FormEditorPage() {
     title: "",
     detail: "",
     is_active: true,
-    draft: true,
+    draft: false,
     primary_color: "#7C3AED",
     secondary_color: "#EC4899",
     collect_email: true,
